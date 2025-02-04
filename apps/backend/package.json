@@ -3,12 +3,16 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
-  "type": "module",
   "scripts": {
-    "dev": "node server.js"
+    "build": "tsc -p tsconfig.json",
+    "dev": "yarn build && node index.js"
   },
   "dependencies": {
     "fastify": "^5.2.1",
     "fastify-cli": "^7.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.1",
+    "typescript": "^5.7.3"
   }
 }
