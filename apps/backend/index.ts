@@ -5,7 +5,7 @@ const fastify = Fastify();
 
 let items: Item[] = [];
 
-fastify.register(import("@fastify/swagger"));
+fastify.register(require("@fastify/swagger"));
 
 fastify.register(import("@fastify/swagger-ui"), {
   routePrefix: "/documentation",
@@ -29,16 +29,39 @@ fastify.register(import("@fastify/swagger-ui"), {
   transformSpecificationClone: true,
 });
 
-fastify.get(
-  "/",
-  {
-    schema: {
-      description: "Get items",
-      tags: ["item"],
-      summary: "qwerty",
-      response: {
-        201: {
-          description: "Successful response",
+fastify.register((app, options, done) => {
+  app.get(
+    "/",
+    {
+      schema: {
+        description: "Get items",
+        tags: ["item"],
+        summary: "qwerty",
+        response: {
+          201: {
+            description: "Successful response",
+            type: "object",
+            properties: {
+              id: { type: "number" },
+              name: { type: "string" },
+            },
+          },
+        },
+      },
+    },
+    (_, reply) => {
+      reply.send(items);
+    }
+  );
+
+  app.post(
+    "/",
+    {
+      schema: {
+        description: "Add item",
+        tags: ["item"],
+        summary: "qwerty",
+        body: {
           type: "object",
           properties: {
             id: { type: "number" },
@@ -47,22 +70,20 @@ fastify.get(
         },
       },
     },
-  },
-  (_, reply) => {
-    reply.send(items);
-  }
-);
+    (reqest, reply) => {
+      const item = reqest.body as Item;
+      items.push(item);
+      reply.send(item);
+    }
+  );
 
-fastify.post("/", {}, function (reqest, reply) {
-  const item = reqest.body as Item;
-  items.push(item);
-  reply.send(item);
-});
+  app.delete("/:itemId", function (reqest, reply) {
+    const params = reqest.params as any;
+    items = items.filter((i) => i.id !== Number(params.itemId));
+    reply.code(204).send();
+  });
 
-fastify.delete("/:itemId", function (reqest, reply) {
-  const params = reqest.params as any;
-  items = items.filter((i) => i.id !== Number(params.itemId));
-  reply.code(204).send();
+  done();
 });
 
 fastify.listen({ port: 3030 }, function (err) {
