@@ -8,20 +8,27 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint --max-warnings 0",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "openapi-ts": "openapi-ts",
+    "orval": "orval --config ./orval.config.ts"
   },
   "dependencies": {
     "@repo/ui": "*",
+    "@tanstack/react-query": "^5.66.0",
+    "axios": "^1.7.9",
     "next": "^15.1.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
+    "@hey-api/client-fetch": "^0.8.1",
+    "@hey-api/openapi-ts": "^0.64.1",
     "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",
     "@types/node": "^22",
     "@types/react": "19.0.8",
     "@types/react-dom": "19.0.3",
+    "orval": "^7.5.0",
     "typescript": "5.7.3"
   }
 }

@@ -31,7 +31,7 @@ fastify.register(import("@fastify/swagger-ui"), {
 
 fastify.register((app, options, done) => {
   app.get(
-    "/",
+    "/items",
     {
       schema: {
         description: "Get items",
@@ -55,7 +55,7 @@ fastify.register((app, options, done) => {
   );
 
   app.post(
-    "/",
+    "/items",
     {
       schema: {
         description: "Add item",
@@ -77,11 +77,27 @@ fastify.register((app, options, done) => {
     }
   );
 
-  app.delete("/:itemId", function (reqest, reply) {
-    const params = reqest.params as any;
-    items = items.filter((i) => i.id !== Number(params.itemId));
-    reply.code(204).send();
-  });
+  app.delete(
+    "/items/:itemId",
+    {
+      schema: {
+        description: "Delete item",
+        tags: ["item"],
+        summary: "qwerty",
+        params: {
+          type: "object",
+          properties: {
+            itemId: { type: "string" },
+          },
+        },
+      },
+    },
+    function (reqest, reply) {
+      const params = reqest.params as any;
+      items = items.filter((i) => i.id !== Number(params.itemId));
+      reply.code(204).send();
+    }
+  );
 
   done();
 });
