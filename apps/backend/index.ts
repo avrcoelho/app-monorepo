@@ -98,7 +98,6 @@ fastify.register((app, options, done) => {
       reply.code(204).send();
     }
   );
-
   done();
 });
 
