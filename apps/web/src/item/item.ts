@@ -6,9 +6,13 @@
  */
 import { useMutation, useQuery } from "@tanstack/react-query";
 import type {
+  DataTag,
+  DefinedInitialDataOptions,
+  DefinedUseQueryResult,
   MutationFunction,
   QueryFunction,
   QueryKey,
+  UndefinedInitialDataOptions,
   UseMutationOptions,
   UseMutationResult,
   UseQueryOptions,
@@ -16,7 +20,11 @@ import type {
 } from "@tanstack/react-query";
 import axios from "axios";
 import type { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
-import type { GetItems201, PostItemsBody } from ".././model";
+import type { GetItems201Item, PostItemsBody } from ".././model";
+
+const instance = axios.create({
+  baseURL: "http://localhost:3030/",
+});
 
 /**
  * Get items
@@ -24,8 +32,8 @@ import type { GetItems201, PostItemsBody } from ".././model";
  */
 export const getItems = (
   options?: AxiosRequestConfig
-): Promise<AxiosResponse<GetItems201>> => {
-  return axios.get(`/items`, options);
+): Promise<AxiosResponse<GetItems201Item[]>> => {
+  return instance.get(`/items`, options);
 };
 
 export const getGetItemsQueryKey = () => {
@@ -36,7 +44,9 @@ export const getGetItemsQueryOptions = <
   TData = Awaited<ReturnType<typeof getItems>>,
   TError = AxiosError<unknown>,
 >(options?: {
-  query?: UseQueryOptions<Awaited<ReturnType<typeof getItems>>, TError, TData>;
+  query?: Partial<
+    UseQueryOptions<Awaited<ReturnType<typeof getItems>>, TError, TData>
+  >;
   axios?: AxiosRequestConfig;
 }) => {
   const { query: queryOptions, axios: axiosOptions } = options ?? {};
@@ -51,7 +61,7 @@ export const getGetItemsQueryOptions = <
     Awaited<ReturnType<typeof getItems>>,
     TError,
     TData
-  > & { queryKey: QueryKey };
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
 export type GetItemsQueryResult = NonNullable<
@@ -59,6 +69,55 @@ export type GetItemsQueryResult = NonNullable<
 >;
 export type GetItemsQueryError = AxiosError<unknown>;
 
+export function useGetItems<
+  TData = Awaited<ReturnType<typeof getItems>>,
+  TError = AxiosError<unknown>,
+>(options: {
+  query: Partial<
+    UseQueryOptions<Awaited<ReturnType<typeof getItems>>, TError, TData>
+  > &
+    Pick<
+      DefinedInitialDataOptions<
+        Awaited<ReturnType<typeof getItems>>,
+        TError,
+        Awaited<ReturnType<typeof getItems>>
+      >,
+      "initialData"
+    >;
+  axios?: AxiosRequestConfig;
+}): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetItems<
+  TData = Awaited<ReturnType<typeof getItems>>,
+  TError = AxiosError<unknown>,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<Awaited<ReturnType<typeof getItems>>, TError, TData>
+  > &
+    Pick<
+      UndefinedInitialDataOptions<
+        Awaited<ReturnType<typeof getItems>>,
+        TError,
+        Awaited<ReturnType<typeof getItems>>
+      >,
+      "initialData"
+    >;
+  axios?: AxiosRequestConfig;
+}): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetItems<
+  TData = Awaited<ReturnType<typeof getItems>>,
+  TError = AxiosError<unknown>,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<Awaited<ReturnType<typeof getItems>>, TError, TData>
+  >;
+  axios?: AxiosRequestConfig;
+}): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
 /**
  * @summary qwerty
  */
@@ -67,13 +126,17 @@ export function useGetItems<
   TData = Awaited<ReturnType<typeof getItems>>,
   TError = AxiosError<unknown>,
 >(options?: {
-  query?: UseQueryOptions<Awaited<ReturnType<typeof getItems>>, TError, TData>;
+  query?: Partial<
+    UseQueryOptions<Awaited<ReturnType<typeof getItems>>, TError, TData>
+  >;
   axios?: AxiosRequestConfig;
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+}): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
   const queryOptions = getGetItemsQueryOptions(options);
 
   const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
-    queryKey: QueryKey;
+    queryKey: DataTag<QueryKey, TData, TError>;
   };
 
   query.queryKey = queryOptions.queryKey;
@@ -89,7 +152,7 @@ export const postItems = (
   postItemsBody: PostItemsBody,
   options?: AxiosRequestConfig
 ): Promise<AxiosResponse<void>> => {
-  return axios.post(`/items`, postItemsBody, options);
+  return instance.post(`/items`, postItemsBody, options);
 };
 
 export const getPostItemsMutationOptions = <
@@ -168,7 +231,7 @@ export const deleteItemsItemId = (
   itemId: string,
   options?: AxiosRequestConfig
 ): Promise<AxiosResponse<void>> => {
-  return axios.delete(`/items/${itemId}`, options);
+  return instance.delete(`/items/${itemId}`, options);
 };
 
 export const getDeleteItemsItemIdMutationOptions = <

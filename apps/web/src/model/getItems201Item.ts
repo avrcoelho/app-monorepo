@@ -5,10 +5,7 @@
  * OpenAPI spec version: 9.4.2
  */
 
-/**
- * Successful response
- */
-export type GetItems201 = {
+export type GetItems201Item = {
   id?: number;
   name?: string;
 };

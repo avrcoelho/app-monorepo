@@ -1,9 +1,12 @@
 import Fastify from "fastify";
+import cors from "@fastify/cors";
 import { Item } from "./types";
 
 const fastify = Fastify();
 
 let items: Item[] = [];
+
+fastify.register(cors);
 
 fastify.register(require("@fastify/swagger"));
 
@@ -40,10 +43,13 @@ fastify.register((app, options, done) => {
         response: {
           201: {
             description: "Successful response",
-            type: "object",
-            properties: {
-              id: { type: "number" },
-              name: { type: "string" },
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                id: { type: "number" },
+                name: { type: "string" },
+              },
             },
           },
         },

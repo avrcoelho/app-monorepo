@@ -5,5 +5,5 @@
  * OpenAPI spec version: 9.4.2
  */
 
-export * from './getItems201';
-export * from './postItemsBody';
+export * from "./getItems201Item";
+export * from "./postItemsBody";

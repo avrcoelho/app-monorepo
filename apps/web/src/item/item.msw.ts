@@ -13,13 +13,13 @@ import {
   http
 } from 'msw'
 import type {
-  GetItems201
+  GetItems201Item
 } from '.././model'
 
-export const getGetItemsResponseMock = (overrideResponse: Partial< GetItems201 > = {}): GetItems201 => ({id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), name: faker.helpers.arrayElement([faker.string.alpha(20), undefined]), ...overrideResponse})
+export const getGetItemsResponseMock = (): GetItems201Item[] => (Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), name: faker.helpers.arrayElement([faker.string.alpha(20), undefined])})))
 
 
-export const getGetItemsMockHandler = (overrideResponse?: GetItems201 | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<GetItems201> | GetItems201)) => {
+export const getGetItemsMockHandler = (overrideResponse?: GetItems201Item[] | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<GetItems201Item[]> | GetItems201Item[])) => {
   return http.get('*/items', async (info) => {await delay(1000);
   
     return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
