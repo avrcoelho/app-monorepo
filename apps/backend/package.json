@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "dev": "tsx index.ts"
+    "dev": "tsx watch index.ts"
   },
   "dependencies": {
     "@fastify/swagger": "^9.4.2",
